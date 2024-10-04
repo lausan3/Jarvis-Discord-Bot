@@ -41,7 +41,7 @@ func Start() {
 }
 
 func ready(s *discordgo.Session, r *discordgo.Ready) {
-	logger.Infof("Jarvis started at time %s", time.Now().Format(time.DateTime))
+	logger.Infof("STARTED Jarvis at time %s", time.Now().Format(time.DateTime))
 }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
@@ -51,21 +51,28 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	// Look for jarvis prefix
-	if strings.HasPrefix(m.Content, "jarvis") {
-		contentWithoutJarvis := strings.Split(m.Content, " ")[1:]
+	if strings.HasPrefix(strings.ToLower(m.Content), "jarvis") {
+		commandParams := strings.Split(m.Content, " ")[1:]
+		commandParamsLength := len(commandParams)
 
-		if len(contentWithoutJarvis) == 0 {
-			logger.Errorf("Message received without input from user %s", m.Author.GlobalName)
+		if commandParamsLength == 0 {
+			logger.Errorf("RECEIVED message without input from user %s", m.Author.GlobalName)
 			return
 		}
 
-		switch strings.ToLower(contentWithoutJarvis[0]) {
+		switch strings.ToLower(commandParams[0]) {
 		case "test":
 			messagecommands.Test(s, m)
 		case "summarize":
-			messagecommands.Summarize(s, m)
+			// Normal summarize command
+			if commandParamsLength == 1 {
+				messagecommands.SummarizeBeforeMessageID(s, m, m.ID)
+				// Summarize before command
+			} else if commandParamsLength >= 3 && commandParams[1] == "before" {
+				messagecommands.SummarizeBeforeMessageID(s, m, commandParams[2])
+			}
 		default:
-			logger.Infof("Received unknown message at %s: %s", m.Timestamp, m.Content)
+			logger.Infof("RECEIVED unknown message at %s: %s", m.Timestamp, m.Content)
 		}
 	}
 }
