@@ -45,9 +45,6 @@ func ready(s *discordgo.Session, r *discordgo.Ready) {
 }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-
-	logger.Infof("Message received at %s: %s", m.Timestamp, m.Content)
-
 	// The bot created the message, return early.
 	if m.Author.ID == s.State.User.ID {
 		return
@@ -62,8 +59,13 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			return
 		}
 
-		if contentWithoutJarvis[0] == "test" {
+		switch strings.ToLower(contentWithoutJarvis[0]) {
+		case "test":
 			messagecommands.Test(s, m)
+		case "summarize":
+			messagecommands.Summarize(s, m)
+		default:
+			logger.Infof("Received unknown message at %s: %s", m.Timestamp, m.Content)
 		}
 	}
 }
