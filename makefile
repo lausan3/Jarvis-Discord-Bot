@@ -1,7 +1,7 @@
 all: build run
 
 build:
-	go build -o bot main.go
+	go build main.go
 
 run:
-	./bot
+	./main
