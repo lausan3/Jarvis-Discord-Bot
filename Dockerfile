@@ -9,6 +9,6 @@ COPY . .
 
 RUN make build
 
-RUN ls -l /app
+RUN ls -la /app
 
 CMD ["make", "run"]
