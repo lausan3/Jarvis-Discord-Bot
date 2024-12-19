@@ -3,11 +3,8 @@ name: Deploy Server
 on:
   workflow_run:
     workflows: ["Docker Build"]
-    types:
-      - completed
-    branches:
-      - main
-      - 3-deploy-to-ec2-instance
+    types: ["completed"]
+    branches: ["main", "3-deploy-to-ec2-instance"]
 
 jobs:
   deploy:
