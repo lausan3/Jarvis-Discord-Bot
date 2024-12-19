@@ -23,11 +23,10 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: 22
           script: |
-            sudo su
-            docker system prune -f
-            docker pull ${{ secrets.DOCKERHUB_TAGS }}
-            docker rm -f $(docker ps -aq)
-            docker run -d -v $(pwd)/.env:/app/.env --env-file ./.env ${{ secrets.DOCKERHUB_TAGS }}
+            sudo docker system prune -f
+            sudo docker pull ${{ secrets.DOCKERHUB_TAGS }}
+            sudo docker rm -f $(docker ps -aq)
+            sudo docker run -d -v $(pwd)/.env:/app/.env --env-file ./.env ${{ secrets.DOCKERHUB_TAGS }}
 
       - name: Delete secrets from instance
         run: rm .env
