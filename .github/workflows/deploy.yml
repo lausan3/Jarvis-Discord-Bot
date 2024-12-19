@@ -6,6 +6,7 @@ on:
     types: ["completed"]
     branches: ["main", "3-deploy-to-ec2-instance"]
 
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
