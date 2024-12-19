@@ -3,26 +3,31 @@ name: Deploy Server
 on:
   workflow_run:
     workflows: ["Docker Build"]
-    types:
-      - completed
-    branches:
-      ["main", "3-deploy-to-ec2-instance"]
+    types: ["completed"]
+    branches: ["main", "3-deploy-to-ec2-instance"]
+
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Deploy to EC2
-      uses: appleboy/ssh-action@v0.1.0
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_KEY }}
-        port: 22
-        script: |
-          sudo su
-          docker system prune -f
-          docker pull ${{ secrets.DOCKERHUB_TAGS }}
-          sudo docker rm -f $(docker ps -aq)
-          docker run -d --env-file ./.env ${{ secrets.DOCKERHUB_TAGS }}
+      - name: Write secrets to instance
+        run: echo "${{ secrets.ENV }}" >> .env
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          port: 22
+          script: |
+            sudo su
+            docker system prune -f
+            docker pull ${{ secrets.DOCKERHUB_TAGS }}
+            docker rm -f $(docker ps -aq)
+            docker run -d -v $(pwd)/.env:/app/.env --env-file ./.env ${{ secrets.DOCKERHUB_TAGS }}
+
+      - name: Delete secrets from instance
+        run: rm .env
