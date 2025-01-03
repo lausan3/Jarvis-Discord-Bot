@@ -2,7 +2,8 @@ package bot
 
 import (
 	"fmt"
-	"main/bot/messagecommands"
+	testresponse "main/bot/messagecommands/TestResponse"
+	"main/bot/messagecommands/summarize"
 	"main/infra/logger"
 	"os"
 	"os/signal"
@@ -63,14 +64,14 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 		switch strings.ToLower(commandParams[0]) {
 		case "test":
-			messagecommands.Test(s, m)
+			testresponse.TestResponse(s, m)
 		case "summarize":
 			// Normal summarize command
 			if commandParamsLength == 1 {
-				messagecommands.SummarizeBeforeMessageID(s, m, m.ID)
+				summarize.SummarizeBeforeMessageID(s, m, m.ID)
 				// Summarize before command
 			} else if commandParamsLength >= 3 && commandParams[1] == "before" {
-				messagecommands.SummarizeBeforeMessageID(s, m, commandParams[2])
+				summarize.SummarizeBeforeMessageID(s, m, commandParams[2])
 			}
 		default:
 			logger.Infof("RECEIVED unknown message at %s: %s", m.Timestamp, m.Content)
