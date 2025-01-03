@@ -57,6 +57,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 		if commandParamsLength == 0 {
 			logger.Errorf("RECEIVED message without input from user %s", m.Author.GlobalName)
+			s.ChannelMessageSendReply(m.ChannelID, "Did you mean to give me a command? Type jarvis help for a list of my available commands.", m.MessageReference)
 			return
 		}
 
