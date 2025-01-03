@@ -63,7 +63,7 @@ func SummarizeBeforeMessageID(s *discordgo.Session, m *discordgo.MessageCreate, 
 
 	if len(messages) == 0 {
 		logger.Warnf("No messages found before message %s", m.ID)
-		s.ChannelMessageSend(m.ChannelID, "I couldn't find any messages to summarize before your provided message. Please note that I don't summarize any jarvis commands or any message I send.")
+		s.ChannelMessageSend(m.ChannelID, "I couldn't find any messages to summarize before your provided message ID. Please note that I don't summarize any jarvis commands or any message I send.")
 		return
 	}
 
