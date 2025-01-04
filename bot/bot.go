@@ -3,6 +3,7 @@ package bot
 import (
 	"fmt"
 	testresponse "main/bot/messagecommands/TestResponse"
+	"main/bot/messagecommands/help"
 	"main/bot/messagecommands/summarize"
 	"main/infra/logger"
 	"os"
@@ -57,13 +58,13 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		commandParamsLength := len(commandParams)
 
 		if commandParamsLength == 0 {
-			logger.Errorf("RECEIVED message without input from user %s", m.Author.GlobalName)
+			logger.Infof("RECEIVED message without input from user %s", m.Author.GlobalName)
 			s.ChannelMessageSendReply(m.ChannelID, "Did you mean to give me a command? Type jarvis help for a list of my available commands.", m.MessageReference)
 			return
 		}
 
 		switch strings.ToLower(commandParams[0]) {
-		case "test":
+		case "hello":
 			testresponse.TestResponse(s, m)
 		case "summarize":
 			// Normal summarize command
@@ -73,6 +74,8 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			} else if commandParamsLength >= 3 && commandParams[1] == "before" {
 				summarize.SummarizeBeforeMessageID(s, m, commandParams[2])
 			}
+		case "help":
+			help.Help(s, m)
 		default:
 			logger.Infof("RECEIVED unknown message at %s: %s", m.Timestamp, m.Content)
 		}
