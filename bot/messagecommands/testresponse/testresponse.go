@@ -1,6 +1,7 @@
 package testresponse
 
 import (
+	"fmt"
 	"main/infra/logger"
 
 	"github.com/bwmarrin/discordgo"
@@ -8,7 +9,7 @@ import (
 
 // Send a test message as a response to "jarvis test"
 func TestResponse(s *discordgo.Session, m *discordgo.MessageCreate) {
-	_, err := s.ChannelMessageSend(m.ChannelID, "Hello!")
+	_, err := s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Hello, %s!", m.Author.Mention()))
 	if err != nil {
 		logger.Errorf("Could not send test message response!")
 		return
