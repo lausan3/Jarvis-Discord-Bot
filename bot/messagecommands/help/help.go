@@ -10,7 +10,7 @@ import (
 func Help(s *discordgo.Session, m *discordgo.MessageCreate) {
 	helpMessage := fmt.Sprintf("Certainly, %s! Please feel free to look at all the commands you can use below:\n\n", m.Author.Mention())
 
-	helpMessage += CreateHelpCommandFormat("Jarvis hello", "responds to you with hello!")
+	helpMessage += CreateHelpCommandFormat("Jarvis hello/test", "responds to you with hello!")
 	helpMessage += CreateHelpCommandFormat("Jarvis help", "this message.")
 	helpMessage += CreateHelpCommandFormat("Jarvis summarize", "summarizes the last x messages. This amount can be changed in the options menu")
 	helpMessage += CreateHelpCommandFormat("Jarvis summarize before Message ID", "summarizes the last x messages before a given message ID. This amount can be changed in the options menu.")

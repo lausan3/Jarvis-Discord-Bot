@@ -2,9 +2,9 @@ package bot
 
 import (
 	"fmt"
-	testresponse "main/bot/messagecommands/TestResponse"
 	"main/bot/messagecommands/help"
 	"main/bot/messagecommands/summarize"
+	"main/bot/messagecommands/testresponse"
 	"main/infra/logger"
 	"os"
 	"os/signal"
@@ -23,13 +23,17 @@ func Start() {
 		logger.Errorf("Discord bot instance could not be started, %s", err.Error())
 	}
 
+	// Add Handlers
 	d.AddHandler(ready)
 
 	d.AddHandler(messageCreate)
 
+	// Add Intents
 	d.Identify.Intents = discordgo.IntentsGuildMessages
 
 	err = d.Open()
+	defer d.Close()
+
 	if err != nil {
 		logger.Fatalf("Error opening Discord session: %s", err.Error())
 	}
@@ -39,7 +43,6 @@ func Start() {
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-sc
 
-	defer d.Close()
 }
 
 func ready(s *discordgo.Session, r *discordgo.Ready) {
@@ -64,7 +67,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 
 		switch strings.ToLower(commandParams[0]) {
-		case "hello":
+		case "hello", "test":
 			testresponse.TestResponse(s, m)
 		case "summarize":
 			// Normal summarize command

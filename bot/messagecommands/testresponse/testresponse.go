@@ -7,7 +7,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-// Send a test message as a response to "jarvis test"
+// Send a test message as a response to "jarvis test and jarvis hello"
 func TestResponse(s *discordgo.Session, m *discordgo.MessageCreate) {
 	_, err := s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Hello, %s!", m.Author.Mention()))
 	if err != nil {
