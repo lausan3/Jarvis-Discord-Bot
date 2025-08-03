@@ -6,13 +6,13 @@ on:
     types: ["completed"]
     branches: ["main", "3-deploy-to-ec2-instance"]
 
-env:
-  CONTAINER_NAME: ${{ vars.CONTAINER_NAME }}
-  TAG: ${{ secrets.DOCKERHUB_TAGS }}
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
+    env:
+      CONTAINER_NAME: ${{ vars.CONTAINER_NAME }}
+      TAG: ${{ secrets.DOCKERHUB_TAGS }}
 
     steps:
       - name: Write secrets to instance
