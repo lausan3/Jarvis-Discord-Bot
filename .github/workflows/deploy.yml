@@ -6,7 +6,10 @@ on:
     types: ["completed"]
     branches: ["main", "3-deploy-to-ec2-instance"]
 
-
+env:
+  CONTAINER_NAME: ${{ vars.CONTAINER_NAME }},
+  TAG: ${{ secrets.DOCKERHUB_TAGS }}
+  
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -24,9 +27,10 @@ jobs:
           port: 22
           script: |
             sudo docker system prune -f
-            sudo docker pull ${{ secrets.DOCKERHUB_TAGS }}
-            sudo docker rm -f $(docker ps -aq)
-            sudo docker run -d -v $(pwd)/.env:/app/.env --env-file ./.env ${{ secrets.DOCKERHUB_TAGS }}
+            sudo docker pull $TAG
+            sudo docker stop $CONTAINER_NAME
+            sudo docker rm -f $CONTAINER_NAME
+            sudo docker run -d -v ./.env:/app/.env --env-file ./.env --name $CONTAINER_NAME $TAG
 
       - name: Delete secrets from instance
         run: rm .env
