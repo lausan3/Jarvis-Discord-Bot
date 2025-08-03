@@ -10,10 +10,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    env:
-      CONTAINER_NAME: ${{ vars.CONTAINER_NAME }}
-      TAG: ${{ secrets.DOCKERHUB_TAGS }}
-
     steps:
       - name: Write secrets to instance
         run: echo "${{ secrets.ENV }}" >> .env
@@ -27,10 +23,10 @@ jobs:
           port: 22
           script: |
             sudo docker system prune -f
-            sudo docker pull $TAG
-            sudo docker stop $CONTAINER_NAME
-            sudo docker rm -f $CONTAINER_NAME
-            sudo docker run -d -v ./.env:/app/.env --env-file ./.env --name $CONTAINER_NAME $TAG
+            sudo docker pull ${{ secrets.DOCKERHUB_TAGS }}
+            sudo docker stop ${{ vars.CONTAINER_NAME }}
+            sudo docker rm -f ${{ vars.CONTAINER_NAME }}
+            sudo docker run -d -v ./.env:/app/.env --env-file ./.env --name ${{ vars.CONTAINER_NAME }} ${{ secrets.DOCKERHUB_TAGS }}
 
       - name: Delete secrets from instance
         run: rm .env
