@@ -1,12 +1,11 @@
 package main
 
-// import (
-// 	"testing"
+import (
+	"jarvis/environment"
+	"testing"
 
-// 	"github.com/aws/aws-cdk-go/awscdk/v2"
-// 	"github.com/aws/aws-cdk-go/awscdk/v2/assertions"
-// 	"github.com/aws/jsii-runtime-go"
-// )
+	"github.com/sirupsen/logrus"
+)
 
 // example tests. To run these tests, uncomment this file along with the
 // example resource in serverless_test.go
@@ -24,3 +23,15 @@ package main
 // 		"VisibilityTimeout": 300,
 // 	})
 // }
+
+func TestEnvVarLoading(t *testing.T) {
+	config := &environment.Configuration{}
+
+	err := environment.LoadEnvVars(config)
+	if err != nil {
+		t.Errorf("Failed to load environment variables: %v", err)
+	}
+
+	logrus.Infof("Loaded configuration: %v", config)
+	logrus.Infof("Discord App ID: %s", config.Discord.AppID)
+}
