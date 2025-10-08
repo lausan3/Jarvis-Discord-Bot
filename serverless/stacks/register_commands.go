@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awsiam"
 	"github.com/aws/aws-cdk-go/awscdk/v2/customresources"
 	"github.com/aws/aws-cdk-go/awscdklambdagoalpha/v2"
 	"github.com/aws/constructs-go/constructs/v10"
@@ -32,9 +33,8 @@ func NewRegisterStack(scope constructs.Construct, id string, props *RegisterStac
 	apiUrl := props.ApiUrl
 
 	function := awscdklambdagoalpha.NewGoFunction(stack, jsii.String("RegisterCommandsFunction"), &awscdklambdagoalpha.GoFunctionProps{
-		FunctionName: jsii.String("Jarvis-RegisterCommands"),
-		Description:  jsii.String("Lambda function to register Discord commands for Jarvis"),
-		Entry:        jsii.String("lambdas/register/register.go"),
+		Description: jsii.String("Lambda function to register Discord commands for Jarvis"),
+		Entry:       jsii.String("lambdas/register/register.go"),
 		Environment: &map[string]*string{
 			"DISCORD_APP_ID":    &appID,
 			"DISCORD_BOT_TOKEN": &token,
@@ -42,6 +42,11 @@ func NewRegisterStack(scope constructs.Construct, id string, props *RegisterStac
 		},
 		Timeout: awscdk.Duration_Millis(jsii.Number(30 * time.Second.Milliseconds())), // 30 seconds
 	})
+
+	function.AddToRolePolicy(awsiam.NewPolicyStatement(&awsiam.PolicyStatementProps{
+		Actions:   jsii.Strings("cloudformation:DeleteStack", "cloudformation:DescribeStacks"),
+		Resources: jsii.Strings("*"),
+	}))
 
 	provider := customresources.NewProvider(stack, jsii.String("RegisterCommandsProvider"), &customresources.ProviderProps{
 		OnEventHandler: function,

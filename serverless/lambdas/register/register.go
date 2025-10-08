@@ -11,6 +11,9 @@ import (
 	"os"
 
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/cloudformation"
 )
 
 func handler(ctx context.Context) error {
@@ -41,6 +44,11 @@ func handler(ctx context.Context) error {
 				},
 			},
 		},
+		{
+			Name:        "help",
+			Type:        1,
+			Description: "Provides help information about the bot.",
+		},
 	}
 
 	body, err := json.Marshal(commands)
@@ -69,6 +77,22 @@ func handler(ctx context.Context) error {
 	}
 
 	fmt.Println("✅ Successfully registered commands with Discord!")
+
+	cfg, err := config.LoadDefaultConfig(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to load AWS config: %v", err)
+	}
+
+	stackName := "Register"
+	cf := cloudformation.NewFromConfig(cfg)
+	_, err = cf.DeleteStack(ctx, &cloudformation.DeleteStackInput{
+		StackName: aws.String(stackName),
+	})
+	if err != nil {
+		return fmt.Errorf("failed to delete stack: %v", err)
+	}
+
+	fmt.Printf("🧨 Self-deletion of stack '%s' requested.\n", stackName)
 	return nil
 }
 
