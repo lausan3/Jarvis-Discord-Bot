@@ -3,11 +3,13 @@ module jarvis
 go 1.23.0
 
 require (
-	github.com/aws/aws-cdk-go/awscdk/v2 v2.214.0
+	github.com/aws/aws-cdk-go/awscdk/v2 v2.219.0
+	github.com/aws/aws-lambda-go v1.49.0
 	github.com/aws/constructs-go/constructs/v10 v10.4.2
 	github.com/aws/jsii-runtime-go v1.113.0
-	github.com/spf13/viper v1.21.0
 	github.com/sirupsen/logrus v1.9.3
+	github.com/spf13/viper v1.21.0
+	github.com/aws/aws-cdk-go/awscdklambdagoalpha/v2 v2.219.0-alpha.0
 )
 
 require (
