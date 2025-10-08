@@ -1,7 +1,11 @@
 package main
 
 import (
+	"jarvis/environment"
+	"jarvis/stacks"
+
 	"github.com/aws/aws-cdk-go/awscdk/v2"
+	"github.com/sirupsen/logrus"
 
 	"github.com/aws/jsii-runtime-go"
 )
@@ -10,6 +14,25 @@ func main() {
 	defer jsii.Close()
 
 	app := awscdk.NewApp(nil)
+
+	environmentVars := &environment.Configuration{}
+
+	err := environment.LoadEnvVars(environmentVars)
+
+	if err != nil {
+		logrus.Fatalf("Failed to load environment variables: %v", err)
+	}
+
+	logrus.Infof("Environment variables loaded successfully. %v", environmentVars)
+
+	stacks.NewRegisterStack(app, "Register", &stacks.RegisterStackProps{
+		StackProps: awscdk.StackProps{
+			Env: env(),
+		},
+		AppID:  environmentVars.Discord.AppID,
+		Token:  environmentVars.Discord.Token,
+		ApiUrl: environmentVars.Discord.APIUrl,
+	})
 
 	app.Synth(nil)
 }
