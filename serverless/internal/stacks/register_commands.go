@@ -34,7 +34,7 @@ func NewRegisterStack(scope constructs.Construct, id string, props *RegisterStac
 
 	function := awscdklambdagoalpha.NewGoFunction(stack, jsii.String("RegisterCommandsFunction"), &awscdklambdagoalpha.GoFunctionProps{
 		Description: jsii.String("Lambda function to register Discord commands for Jarvis"),
-		Entry:       jsii.String("lambdas/register/register.go"),
+		Entry:       jsii.String("internal/lambdas/register/register.go"),
 		Environment: &map[string]*string{
 			"DISCORD_APP_ID":    &appID,
 			"DISCORD_BOT_TOKEN": &token,

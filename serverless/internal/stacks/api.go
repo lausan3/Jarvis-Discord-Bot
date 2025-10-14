@@ -14,12 +14,15 @@ type APIStackProps struct {
 
 	PublicKey string
 	Token     string
+
+	OpenAIKey string
 }
 
 func NewAPIStack(scope constructs.Construct, id string, props *APIStackProps) awscdk.Stack {
 	stack := awscdk.NewStack(scope, &id, &props.StackProps)
 	publicKey := props.PublicKey
 	token := props.Token
+	oaiKey := props.OpenAIKey
 
 	api := awsapigatewayv2.NewHttpApi(stack, jsii.String("JarvisAPI"), &awsapigatewayv2.HttpApiProps{
 		ApiName:     jsii.String("JarvisBot-CommandsAPI"),
@@ -35,12 +38,13 @@ func NewAPIStack(scope constructs.Construct, id string, props *APIStackProps) aw
 	})
 
 	commandFunc := awscdklambdagoalpha.NewGoFunction(stack, jsii.String("JarvisCommandsHandler"), &awscdklambdagoalpha.GoFunctionProps{
-		Entry:      jsii.String("lambdas/api/commands.go"),
+		Entry:      jsii.String("internal/lambdas/api/commands.go"),
 		MemorySize: jsii.Number(128),
 		Timeout:    awscdk.Duration_Seconds(jsii.Number(10)),
 		Environment: &map[string]*string{
 			"DISCORD_PUBLIC_KEY": &publicKey,
 			"DISCORD_BOT_TOKEN":  &token,
+			"OPENAI_API_KEY":     &oaiKey,
 		},
 	})
 

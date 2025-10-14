@@ -2,7 +2,7 @@ package main
 
 import (
 	"jarvis/environment"
-	"jarvis/stacks"
+	"jarvis/internal/stacks"
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/sirupsen/logrus"
@@ -42,6 +42,7 @@ func main() {
 		},
 		PublicKey: environmentVars.Discord.PublicKey,
 		Token:     environmentVars.Discord.Token,
+		OpenAIKey: environmentVars.OpenAI.Key,
 	})
 
 	app.Synth(nil)

@@ -20,6 +20,7 @@ func handler(ctx context.Context, request events.APIGatewayV2HTTPRequest) (event
 	timestamp := request.Headers["x-signature-timestamp"]
 	pubkey := os.Getenv("DISCORD_PUBLIC_KEY")
 	token := os.Getenv("DISCORD_BOT_TOKEN")
+	openaiKey := os.Getenv("OPENAI_API_KEY")
 	body := request.Body
 
 	logrus.Infof("Request: %v", request)
@@ -63,6 +64,13 @@ func handler(ctx context.Context, request events.APIGatewayV2HTTPRequest) (event
 		switch commandName {
 		case "echo":
 			return commands.EchoHandler(token, &interaction)
+		}
+	case discordgo.MessageApplicationCommand:
+		switch commandName {
+		case "summarize":
+			messageId := appCommand.TargetID
+
+			return commands.SummarizeMessageInteractionCommandHandler(token, openaiKey, messageId, &interaction)
 		}
 	}
 

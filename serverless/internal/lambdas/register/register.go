@@ -29,6 +29,7 @@ func handler(ctx context.Context) error {
 	// NOTE: Add new commands here
 	commands := []discordgo.ApplicationCommand{
 		commands.ApplicationCommandEcho,
+		commands.MessageApplicationCommandSummarize,
 	}
 
 	body, err := json.Marshal(commands)
