@@ -6,7 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"jarvis/internal/commands"
+	chat_commands "jarvis/internal/commands/chat"
+	message_commands "jarvis/internal/commands/message"
 	"net/http"
 	"os"
 
@@ -28,8 +29,8 @@ func handler(ctx context.Context) error {
 
 	// NOTE: Add new commands here
 	commands := []discordgo.ApplicationCommand{
-		commands.ApplicationCommandEcho,
-		commands.MessageApplicationCommandSummarize,
+		chat_commands.ChatApplicationCommandEcho,
+		message_commands.MessageApplicationCommandSummarize,
 	}
 
 	body, err := json.Marshal(commands)

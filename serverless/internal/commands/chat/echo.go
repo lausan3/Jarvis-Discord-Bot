@@ -1,4 +1,4 @@
-package commands
+package chat_commands
 
 import (
 	"jarvis/utils/responses"
@@ -7,7 +7,21 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func EchoHandler(appToken string, interaction *discordgo.InteractionCreate) (events.APIGatewayV2HTTPResponse, error) {
+var ChatApplicationCommandEcho discordgo.ApplicationCommand = discordgo.ApplicationCommand{
+	Name:        "echo",
+	Type:        discordgo.ChatApplicationCommand,
+	Description: "Echoes your message.",
+	Options: []*discordgo.ApplicationCommandOption{
+		{
+			Name:        "message",
+			Description: "The message to echo",
+			Type:        3,
+			Required:    true,
+		},
+	},
+}
+
+func EchoCommandHandler(appToken string, interaction *discordgo.InteractionCreate) (events.APIGatewayV2HTTPResponse, error) {
 	appCommand := interaction.ApplicationCommandData()
 	var message = appCommand.GetOption("message").StringValue()
 
@@ -26,18 +40,4 @@ func EchoHandler(appToken string, interaction *discordgo.InteractionCreate) (eve
 		"type": response.Type,
 		"data": response.Data,
 	})
-}
-
-var ApplicationCommandEcho discordgo.ApplicationCommand = discordgo.ApplicationCommand{
-	Name:        "echo",
-	Type:        discordgo.ChatApplicationCommand,
-	Description: "Echoes your message.",
-	Options: []*discordgo.ApplicationCommandOption{
-		{
-			Name:        "message",
-			Description: "The message to echo",
-			Type:        3,
-			Required:    true,
-		},
-	},
 }

@@ -1,4 +1,4 @@
-package commands
+package message_commands
 
 import (
 	bot_utils "jarvis/utils/bot"

@@ -3,7 +3,8 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"jarvis/internal/commands"
+	chat_commands "jarvis/internal/commands/chat"
+	message_commands "jarvis/internal/commands/message"
 	"jarvis/utils/middleware"
 	"jarvis/utils/responses"
 	"os"
@@ -63,14 +64,14 @@ func handler(ctx context.Context, request events.APIGatewayV2HTTPRequest) (event
 	case discordgo.ChatApplicationCommand:
 		switch commandName {
 		case "echo":
-			return commands.EchoHandler(token, &interaction)
+			return chat_commands.EchoCommandHandler(token, &interaction)
 		}
 	case discordgo.MessageApplicationCommand:
 		switch commandName {
 		case "summarize":
 			messageId := appCommand.TargetID
 
-			return commands.SummarizeMessageInteractionCommandHandler(token, openaiKey, messageId, &interaction)
+			return message_commands.SummarizeMessageInteractionCommandHandler(token, openaiKey, messageId, &interaction)
 		}
 	}
 
