@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"jarvis/commands"
+	"jarvis/internal/commands"
 	"jarvis/utils/middleware"
 	"jarvis/utils/responses"
 	"os"
@@ -57,6 +57,7 @@ func handler(ctx context.Context, request events.APIGatewayV2HTTPRequest) (event
 	commandType := appCommand.CommandType
 	commandName := appCommand.Name
 
+	// NOTE: Add new commands here
 	switch commandType {
 	case discordgo.ChatApplicationCommand:
 		switch commandName {

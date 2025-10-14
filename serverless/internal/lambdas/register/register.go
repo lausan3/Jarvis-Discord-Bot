@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"jarvis/commands"
+	"jarvis/internal/commands"
 	"net/http"
 	"os"
 
@@ -26,6 +26,7 @@ func handler(ctx context.Context) error {
 		return fmt.Errorf("missing required environment variables")
 	}
 
+	// NOTE: Add new commands here
 	commands := []discordgo.ApplicationCommand{
 		commands.ApplicationCommandEcho,
 	}
