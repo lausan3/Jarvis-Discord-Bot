@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"jarvis/models"
+	"jarvis/commands"
 	"net/http"
 	"os"
 
@@ -14,6 +14,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation"
+	"github.com/bwmarrin/discordgo"
 )
 
 func handler(ctx context.Context) error {
@@ -25,30 +26,8 @@ func handler(ctx context.Context) error {
 		return fmt.Errorf("missing required environment variables")
 	}
 
-	commands := []models.Command{
-		{
-			Name:        "ping",
-			Type:        1,
-			Description: "Replies with pong!",
-		},
-		{
-			Name:        "echo",
-			Type:        1,
-			Description: "Echoes your message.",
-			Options: []models.CommandOption{
-				{
-					Name:        "message",
-					Description: "The message to echo",
-					Type:        3,
-					Required:    true,
-				},
-			},
-		},
-		{
-			Name:        "help",
-			Type:        1,
-			Description: "Provides help information about the bot.",
-		},
+	commands := []discordgo.ApplicationCommand{
+		commands.ApplicationCommandEcho,
 	}
 
 	body, err := json.Marshal(commands)

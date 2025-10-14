@@ -27,11 +27,21 @@ func main() {
 
 	stacks.NewRegisterStack(app, "Register", &stacks.RegisterStackProps{
 		StackProps: awscdk.StackProps{
-			Env: env(),
+			Description: jsii.String("Registers Jarvis's Application Commands with Discord"),
+			Env:         env(),
 		},
 		AppID:  environmentVars.Discord.AppID,
 		Token:  environmentVars.Discord.Token,
 		ApiUrl: environmentVars.Discord.APIUrl,
+	})
+
+	stacks.NewAPIStack(app, "Jarvis-Commands-API", &stacks.APIStackProps{
+		StackProps: awscdk.StackProps{
+			Description: jsii.String("API for handling Jarvis's Application Commands"),
+			Env:         env(),
+		},
+		PublicKey: environmentVars.Discord.PublicKey,
+		Token:     environmentVars.Discord.Token,
 	})
 
 	app.Synth(nil)
