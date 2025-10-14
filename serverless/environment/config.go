@@ -7,6 +7,7 @@ import (
 
 type Configuration struct {
 	Discord DiscordConfig `mapstructure:",squash"`
+	OpenAI  OpenAIConfig  `mapstructure:",squash"`
 }
 
 func LoadEnvVars(config *Configuration) error {
