@@ -26,7 +26,7 @@ func SummarizeBefore(botToken string, openAIToken string, beforeMessageID string
 	oai := openai.NewClient(openAIToken)
 
 	channelId := s.ChannelID
-	messagesArr, err := c.ChannelMessages(channelId, 100, beforeMessageID, "", "")
+	messagesArr, err := c.ChannelMessages(channelId, 50, beforeMessageID, "", "")
 	if err != nil {
 		c.ChannelMessageSend(channelId, "You didn't provide a message id correctly, try again?")
 		return
