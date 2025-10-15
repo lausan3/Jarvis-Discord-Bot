@@ -30,6 +30,7 @@ func handler(ctx context.Context) error {
 	// NOTE: Add new commands here
 	commands := []discordgo.ApplicationCommand{
 		chat_commands.ChatApplicationCommandEcho,
+		chat_commands.ChatApplicationCommandSummarize,
 		message_commands.MessageApplicationCommandSummarize,
 	}
 

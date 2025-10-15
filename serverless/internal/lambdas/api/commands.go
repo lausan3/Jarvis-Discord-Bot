@@ -15,6 +15,22 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+var (
+	c *discordgo.Session
+)
+
+func init() {
+	token := os.Getenv("DISCORD_BOT_TOKEN")
+
+	client, err := discordgo.New("Bot " + token)
+	if err != nil {
+		logrus.Fatalf("Failed to create Discord session: %v", err)
+		return
+	}
+
+	c = client
+}
+
 func handler(ctx context.Context, request events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
 	// Verify request signature and timestamp
 	signature := request.Headers["x-signature-ed25519"]
@@ -33,8 +49,7 @@ func handler(ctx context.Context, request events.APIGatewayV2HTTPRequest) (event
 	// Parse interaction
 	var interaction discordgo.InteractionCreate
 
-	err := json.Unmarshal([]byte(body), &interaction)
-	if err != nil {
+	if err := json.Unmarshal([]byte(body), &interaction); err != nil {
 		resp := map[string]any{
 			"detail":       err.Error(),
 			"bodyReceived": request.Body,
@@ -65,13 +80,15 @@ func handler(ctx context.Context, request events.APIGatewayV2HTTPRequest) (event
 		switch commandName {
 		case "echo":
 			return chat_commands.EchoCommandHandler(token, &interaction)
+		case "summarize":
+			return chat_commands.SummarizeChatInteractionCommandHandler(c, token, openaiKey, &interaction)
 		}
 	case discordgo.MessageApplicationCommand:
 		switch commandName {
 		case "summarize":
 			messageId := appCommand.TargetID
 
-			return message_commands.SummarizeMessageInteractionCommandHandler(token, openaiKey, messageId, &interaction)
+			return message_commands.SummarizeMessageInteractionCommandHandler(c, token, openaiKey, messageId, &interaction)
 		}
 	}
 
