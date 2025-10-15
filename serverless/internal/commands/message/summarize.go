@@ -2,6 +2,7 @@ package message_commands
 
 import (
 	bot_utils "jarvis/utils/bot"
+	bot_responses "jarvis/utils/bot/responses"
 	"jarvis/utils/responses"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -17,7 +18,7 @@ var MessageApplicationCommandSummarize = discordgo.ApplicationCommand{
 	},
 }
 
-func SummarizeMessageInteractionCommandHandler(botToken string, oaiKey string, beforeMessageId string, interaction *discordgo.InteractionCreate) (events.APIGatewayV2HTTPResponse, error) {
+func SummarizeMessageInteractionCommandHandler(c *discordgo.Session, botToken string, oaiKey string, beforeMessageId string, interaction *discordgo.InteractionCreate) (events.APIGatewayV2HTTPResponse, error) {
 	member := interaction.Member
 
 	if member == nil {
@@ -27,16 +28,33 @@ func SummarizeMessageInteractionCommandHandler(botToken string, oaiKey string, b
 
 	logrus.Infof("Received summarize command from user %s", member.User.Username)
 
+	acknowledge := discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content: "Summarizing messages...",
+		},
+	}
+
+	if err := c.InteractionRespond(interaction.Interaction, &acknowledge); err != nil {
+		logrus.Errorf("Failed to send interaction response: %v", err)
+
+		bot_responses.RespondUnexpectedError(c, interaction.Interaction)
+
+		return responses.NewClientErrorGatewayResponse("Failed to send interaction response", map[string]any{"detail": err.Error()})
+	}
+
 	content, err := bot_utils.SummarizeBefore(botToken, oaiKey, beforeMessageId, interaction)
 	if err != nil {
 		logrus.Errorf("Error in summarize command: %v", err)
+
+		bot_responses.RespondUnexpectedError(c, interaction.Interaction)
+
 		return responses.NewServerErrorGatewayResponse("Failed to process summarize command", map[string]any{"detail": err.Error()})
 	}
 
-	return responses.NewSuccessfulBotResponse(botToken, map[string]any{
-		"type": discordgo.InteractionResponseChannelMessageWithSource,
-		"data": map[string]any{
-			"content": content,
-		},
+	c.FollowupMessageCreate(interaction.Interaction, true, &discordgo.WebhookParams{
+		Content: content,
 	})
+
+	return responses.NewSuccessGatewayResponse("Summarize command processed successfully", nil)
 }
