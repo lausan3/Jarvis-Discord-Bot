@@ -29,7 +29,7 @@ func SummarizeMessageInteractionCommandHandler(c *discordgo.Session, botToken st
 	logrus.Infof("Received summarize command from user %s", member.User.Username)
 
 	acknowledge := discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
 			Content: "Summarizing messages...",
 		},
@@ -52,8 +52,8 @@ func SummarizeMessageInteractionCommandHandler(c *discordgo.Session, botToken st
 		return responses.NewServerErrorGatewayResponse("Failed to process summarize command", map[string]any{"detail": err.Error()})
 	}
 
-	c.FollowupMessageCreate(interaction.Interaction, true, &discordgo.WebhookParams{
-		Content: content,
+	c.InteractionResponseEdit(interaction.Interaction, &discordgo.WebhookEdit{
+		Content: &content,
 	})
 
 	return responses.NewSuccessGatewayResponse("Summarize command processed successfully", nil)
